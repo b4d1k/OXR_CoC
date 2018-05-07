@@ -162,10 +162,10 @@ void print_stack(lua_State* L)
         Msg("%2d : %s", -i - 1, lua_typename(L, lua_type(L, -i - 1)));
 }
 
-void CDbgLuaHelper::hookLuaBind(lua_State* l)
+int CDbgLuaHelper::hookLuaBind(lua_State* l)
 {
     if (!m_pThis)
-        return;
+        return -1;
     L = l;
     int top1 = lua_gettop(L);
     Msg("hookLuaBind start");
@@ -183,6 +183,7 @@ void CDbgLuaHelper::hookLuaBind(lua_State* l)
         Msg("Tope string %s", lua_tostring(L, -1));
     int top2 = lua_gettop(L);
     VERIFY(top2 == top1);
+    return LUA_ERRRUN;
 }
 
 void CDbgLuaHelper::hookLua(lua_State* l, lua_Debug* ar)

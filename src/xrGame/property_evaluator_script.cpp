@@ -15,7 +15,7 @@
 using namespace luabind;
 
 SCRIPT_EXPORT(CScriptPropertyEvaluator, (), {
-    module(luaState)[class_<CScriptPropertyEvaluator, no_bases, default_holder, CScriptPropertyEvaluatorWrapper>(
+    module(luaState)[class_<CScriptPropertyEvaluator, CScriptPropertyEvaluatorWrapper>(
                          "property_evaluator")
                          .def_readonly("object", &CScriptPropertyEvaluator::m_object)
                          .def_readonly("storage", &CScriptPropertyEvaluator::m_storage)

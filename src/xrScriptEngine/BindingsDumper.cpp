@@ -32,10 +32,10 @@ void BindingsDumper::PrintfIndented(const char* format, ...)
 
 namespace
 {
-luabind::detail::function_object* get_upvalue_function(lua_State* ls, int n)
+luabind::detail::object_rep* get_upvalue_function(lua_State* ls, int n)
 {
     using namespace luabind::detail;
-    function_object* f = nullptr;
+    object_rep* f = nullptr;
     if (lua_getupvalue(ls, -1, n))
     {
         int ltype = lua_type(ls, -1);
@@ -44,7 +44,7 @@ luabind::detail::function_object* get_upvalue_function(lua_State* ls, int n)
             if (lua_getupvalue(ls, -1, 1))
             {
                 if (lua_type(ls, -1) == LUA_TUSERDATA)
-                    f = *static_cast<function_object**>(lua_touserdata(ls, -1));
+                    f = *static_cast<object_rep**>(lua_touserdata(ls, -1));
                 lua_pop(ls, 1); // upvalue
             }
         }
@@ -75,6 +75,8 @@ int StripArg(lua_State* ls, int argIndex, bool commaOnly = true)
 
 void BindingsDumper::PrintFunction(SignatureFormatter formatter, const void* fcontext /*= nullptr*/)
 {
+    R_ASSERT("BindingsDumper: Not implemented yet!");
+    /*
     using namespace luabind::detail;
     bool done = false;
     int cfunc = lua_iscfunction(ls, -1);
@@ -86,7 +88,7 @@ void BindingsDumper::PrintFunction(SignatureFormatter formatter, const void* fco
         {
             if (lua_type(ls, -1) == LUA_TUSERDATA)
             {
-                auto fobj = *static_cast<function_object**>(lua_touserdata(ls, -1));
+                auto fobj = *static_cast<object_rep**>(lua_touserdata(ls, -1));
                 if (formatter)
                 {
                     SignatureFormatterParams params;
@@ -109,8 +111,8 @@ void BindingsDumper::PrintFunction(SignatureFormatter formatter, const void* fco
     if (cfunc && !done && hasupvalue) // property
     {
         const char* propName = lua_tostring(ls, -2);
-        function_object* getter = get_upvalue_function(ls, 1);
-        function_object* setter = get_upvalue_function(ls, 2);
+        object_rep* getter = get_upvalue_function(ls, 1);
+        object_rep* setter = get_upvalue_function(ls, 2);
         R_ASSERT(getter);
         int signatureLen = getter->format_signature(ls, "#");
         const char* signature = lua_tostring(ls, -1);
@@ -123,21 +125,27 @@ void BindingsDumper::PrintFunction(SignatureFormatter formatter, const void* fco
         Print(" }\n");
         lua_pop(ls, signatureLen);
     }
+    */
 }
 
 void BindingsDumper::FormatStaticFunction(const SignatureFormatterParams& params)
 {
+    R_ASSERT("BindingsDumper: Not implemented yet!");
+    /*
     using namespace luabind::detail;
-    function_object* fobj = params.Function;
+    object_rep* fobj = params.Function;
     int signatureLen = fobj->format_signature(ls, fobj->name.c_str());
     const char* signature = lua_tostring(ls, -1);
     PrintfIndented("static %s;\n", signature);
     lua_pop(ls, signatureLen);
+    */
 };
 
 void BindingsDumper::PrintStaticFunction() { PrintFunction(&BindingsDumper::FormatStaticFunction); }
 void BindingsDumper::FormatMemberFunction(const SignatureFormatterParams& params)
 {
+    R_ASSERT("BindingsDumper: Not implemented yet!");
+    /*
     auto refClassName = static_cast<const char*>(params.Context);
     bool stripReturnValue = false; // for constructors and operators
     xr_string funcName;
@@ -224,6 +232,7 @@ void BindingsDumper::FormatMemberFunction(const SignatureFormatterParams& params
     const char* signature = lua_tostring(ls, -1);
     PrintfIndented("%s;\n", signature);
     lua_pop(ls, 1); // pop concatenated signature
+    */
 };
 
 void BindingsDumper::PrintMemberFunction(const char* className)
@@ -239,6 +248,8 @@ void BindingsDumper::PrintIntConstant(const char* name, int value)
 
 void BindingsDumper::PrintClass()
 {
+    R_ASSERT("BindingsDumper: Not implemented yet!");
+    /*
     using namespace luabind;
     using namespace luabind::detail;
     auto crep = static_cast<class_rep*>(lua_touserdata(ls, -1));
@@ -264,11 +275,11 @@ void BindingsDumper::PrintClass()
     // print static members (static functions + nested classes)
     crep->get_default_table(ls);
     object staticMembers(from_stack(ls, -1));
-    for (luabind::iterator it(staticMembers), end; it != end; it++)
+    for (luabind::object::iterator it(staticMembers), end; it != end; it++)
     {
         auto proxy = *it;
         int prev = lua_gettop(ls);
-        proxy.push(ls);
+        proxy.pushvalue();
         if (is_class_rep(ls, -1))
             PrintClass();
         else if (is_luabind_function(ls, -1, false))
@@ -283,13 +294,14 @@ void BindingsDumper::PrintClass()
         PrintIntConstant(c.first, c.second);
     // print functions and properties
     crep->get_table(ls);
-    object members(from_stack(ls, -1));
-    for (luabind::iterator it(members), end; it != end; it++)
+    luabind::object	table(ls);
+    table.set();
+    for (luabind::object::iterator it = table.begin(); it != table.end(); ++it)
     {
         auto proxy = *it;
         int prev = lua_gettop(ls);
-        proxy.push(ls);
-        int ltype = luabind::type(proxy);
+        proxy.pushvalue();
+        int ltype = proxy.type();
         if (ltype == LUA_TFUNCTION) // XXX: print class members in reverse order
             PrintMemberFunction(crep->name());
         lua_pop(ls, 1);
@@ -298,17 +310,20 @@ void BindingsDumper::PrintClass()
     lua_pop(ls, 1); // pop table
     shiftLevel--;
     PrintIndented("}\n");
+    */
 }
 
 void BindingsDumper::PrintNamespace(luabind::object& namesp)
 {
+    R_ASSERT("BindingsDumper: Not implemented yet!");
+    /*
     using namespace luabind;
     using namespace luabind::detail;
     int scopeFunctions = 0, scopeClasses = 0, scopeNamespaces = 0;
-    for (luabind::iterator it(namesp), end; it != end; it++)
+    for (luabind::object::iterator it(namesp), end; it != end; it++)
     {
         auto proxy = *it;
-        int ltype = luabind::type(proxy);
+        int ltype = proxy.type();
         switch (ltype)
         {
         case LUA_TFUNCTION: // free function
@@ -330,7 +345,7 @@ void BindingsDumper::PrintNamespace(luabind::object& namesp)
     {
         auto proxy = *functions.top();
         functions.pop();
-        proxy.push(ls);
+        proxy.pushvalue();
         PrintFunction();
         lua_pop(ls, 1);
     }
@@ -338,7 +353,7 @@ void BindingsDumper::PrintNamespace(luabind::object& namesp)
     {
         auto proxy = *classes.top();
         classes.pop();
-        proxy.push(ls);
+        proxy.pushvalue();
         if (is_class_rep(ls, -1))
             PrintClass();
         lua_pop(ls, 1);
@@ -347,7 +362,7 @@ void BindingsDumper::PrintNamespace(luabind::object& namesp)
     {
         auto proxy = *namespaces.top();
         namespaces.pop();
-        proxy.push(ls);
+        proxy.pushvalue();
         object innerNamesp(from_stack(ls, -1));
         auto namespaceName = lua_tostring(ls, -2);
         PrintfIndented("namespace %s\n", namespaceName);
@@ -358,10 +373,13 @@ void BindingsDumper::PrintNamespace(luabind::object& namesp)
         PrintIndented("}\n");
         lua_pop(ls, 1);
     }
+    */
 }
 
 BindingsDumper::BindingsDumper()
 {
+    R_ASSERT("BindingsDumper: Not implemented yet!");
+    /*
     std::pair<const char*, const char*> subst[] = {{"__add", "operator+"}, {"__sub", "operator-"},
         {"__mul", "operator*"}, {"__div", "operator/"}, {"__pow", "operator^"}, {"__lt", "operator<"},
         {"__le", "operator<="}, {"__gt", "operator>"}, {"__ge", "operator>="}, {"__eq", "operator=="},
@@ -369,10 +387,13 @@ BindingsDumper::BindingsDumper()
     const u32 substCount = sizeof(subst) / sizeof(*subst);
     for (u32 i = 0; i < substCount; i++)
         operatorSubst.insert(subst[i]);
+        */
 }
 
 void BindingsDumper::Dump(lua_State* luaState, IWriter* outStream, const Options& opt)
 {
+    R_ASSERT("BindingsDumper: Not implemented yet!");
+    /*
     ls = luaState;
     options = opt;
     shiftLevel = 0;
@@ -381,4 +402,5 @@ void BindingsDumper::Dump(lua_State* luaState, IWriter* outStream, const Options
     luabind::object globals = luabind::globals(ls);
     PrintNamespace(globals);
     luabind::set_custom_type_marking(true);
+    */
 }

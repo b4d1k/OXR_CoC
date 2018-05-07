@@ -212,7 +212,6 @@
   <ItemGroup>
     <ClInclude Include="BindingsDumper.hpp" />
     <ClInclude Include="DebugMacros.hpp" />
-    <ClInclude Include="Functor.hpp" />
     <ClInclude Include="LuaStudio\Backend\Backend.hpp" />
     <ClInclude Include="LuaStudio\Backend\Engine.hpp" />
     <ClInclude Include="LuaStudio\Backend\Interfaces.hpp" />

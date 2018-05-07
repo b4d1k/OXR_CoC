@@ -122,7 +122,7 @@ char* engine::class_name(char* buffer, u32 size, class_rep& crep)
 
 void engine::type_convert_class(char* buffer, u32 size, lua_State* state, int index)
 {
-    object_rep* object = get_instance(state, index);
+    object_rep* object = is_class_object(state, index);
     VERIFY2(object, "invalid object userdata");
     sz_cpy(buffer, size, "");
     sz_cat(buffer, size, "class \"");
@@ -155,7 +155,7 @@ bool engine::type_convert_instance(char* buffer, u32 size, lua_State* state, int
 
 void engine::type_convert_userdata(char* buffer, u32 size, lua_State* state, int index)
 {
-    if (get_instance(state, index))
+    if (is_class_object(state, index))
     {
         type_convert_class(buffer, size, state, index);
         return;
@@ -188,9 +188,6 @@ bool engine::type_to_string(char* buffer, u32 size, lua_State* state, int index,
 void engine::fill_class_info(
     Backend& backend, char* buffer, u32 size, object_rep* object, class_rep* crep, lua_State* state)
 {
-    R_ASSERT(!"not implemented");
-    // XXX nitrocaster: fix luabind 0.9 conformance
-    /*
     pstr stream = buffer;
     stream += xr_sprintf(stream, size -(stream-buffer), "{");
     typedef class_rep::property_map property_map;
@@ -224,15 +221,11 @@ void engine::fill_class_info(
         i++;
     }
     stream += xr_sprintf(stream, size-(stream-buffer), "}%c", 0);
-    */
 }
 
 void engine::value_convert_class(Backend& backend, char* buffer, u32 size, class_rep* crep, lua_State* state, int index,
     IconType& icon_type, bool full_description)
 {
-    R_ASSERT(!"not implemented");
-    // XXX nitrocaster: fix luabind 0.9 conformance
-    /*
     icon_type = cs::lua_studio::icon_type_class;
     if (!full_description)
     {
@@ -256,15 +249,10 @@ void engine::value_convert_class(Backend& backend, char* buffer, u32 size, class
         return;
     }
     fill_class_info(backend, buffer, size, object, crep, state);
-    */
 }
 
 bool engine::value_convert_instance(Backend& backend, char* buffer, u32 size, object_rep* object, lua_State* state)
 {
-    R_ASSERT(!"not implemented");
-    return false;
-    // XXX nitrocaster: fix luabind 0.9 conformance
-    /*
     typedef lua_reference lua_reference;
     lua_reference const &tbl = object->get_lua_table();
     if (!tbl.is_valid())
@@ -300,13 +288,12 @@ bool engine::value_convert_instance(Backend& backend, char* buffer, u32 size, ob
         return false;
     stream += xr_sprintf(stream, size-(stream-buffer), "}%c", 0);
     return true;
-    */
 }
 
 bool engine::value_convert_instance(
     Backend& backend, char* buffer, u32 size, lua_State* state, int index, IconType& icon_type, bool full_description)
 {
-    object_rep* object = get_instance(state, index);
+    object_rep* object = is_class_object(state, index);
     if (!object)
         return false;
     if (full_description && !value_convert_instance(backend, buffer, size, object, state))
@@ -332,7 +319,7 @@ bool engine::value_to_string(
     case engine::lua_type_light_user_data:
     case engine::lua_type_user_data:
     {
-        if (!get_instance(state, index))
+        if (!is_class_object(state, index))
         {
             if (!is_luabind_class(state, index))
             {
@@ -362,7 +349,7 @@ bool engine::value_to_string(
 
 void engine::push_class(lua_State* state, const char* id)
 {
-    object_rep* object = get_instance(state, -1);
+    object_rep* object = is_class_object(state, -1);
     VERIFY(object);
     class_rep* rep = object->crep();
     R_ASSERT2(rep, "null class userdata");
@@ -388,11 +375,11 @@ void engine::push_class_base(lua_State* state, const char* id)
 
 void engine::push_class_instance(lua_State* state, const char* id)
 {
-    object_rep* object = get_instance(state, -1);
+    object_rep* object = is_class_object(state, -1);
     if (!object)
     {
         lua_pop_value(state, 1);
-        object = get_instance(state, -1);
+        object = is_class_object(state, -1);
         VERIFY(object);
     }
     lua_insert(state, 1);
@@ -436,9 +423,6 @@ bool engine::push_value(lua_State* state, const char* id, IconType icon_type)
 
 void engine::fill_class_data(Backend& backend, ValueToExpand& value_to_expand, lua_State* state)
 {
-    R_ASSERT(!"not implemented");
-    // XXX nitrocaster: fix luabind 0.9 conformance
-    /*
     object_rep *object = static_cast<object_rep*>(lua_touserdata(state, -2));
     class_rep *crep = static_cast<class_rep*>(lua_touserdata(state, -1));
     R_ASSERT2(crep, "invalid class userdata");
@@ -476,7 +460,6 @@ void engine::fill_class_data(Backend& backend, ValueToExpand& value_to_expand, l
         lua_remove(state, 1);
         value_to_expand.add_value((*i).first, type, value, icon_type);
     }
-    */
 }
 
 void engine::expand_class(Backend& backend, ValueToExpand& value, lua_State* state)
@@ -485,7 +468,7 @@ void engine::expand_class(Backend& backend, ValueToExpand& value, lua_State* sta
     class_rep* crep = static_cast<class_rep*>(lua_touserdata(state, -1));
     R_ASSERT2(crep, "invalid class userdata");
     fill_class_data(backend, value, state);
-    object_rep* object = get_instance(state, -2);
+    object_rep* object = is_class_object(state, -2);
     if (!object)
         lua_pushnil(state);
     if (lua_gettop(state) <= start + 1)
@@ -495,11 +478,8 @@ void engine::expand_class(Backend& backend, ValueToExpand& value, lua_State* sta
 
 void engine::expand_class_instance(Backend& backend, ValueToExpand& value_to_expand, lua_State* state)
 {
-    R_ASSERT(!"not implemented");
-    // XXX nitrocaster: fix luabind 0.9 conformance
-    /*
     typedef object_rep object_rep;
-    object_rep *object = get_instance(state, -1);
+    object_rep *object = is_class_object(state, -1);
     VERIFY2(object, "invalid object userdata");
     if (object->crep())
     {
@@ -531,12 +511,11 @@ void engine::expand_class_instance(Backend& backend, ValueToExpand& value_to_exp
         lua_pop_value(state, 1);
     }
     lua_pop_value(state, 1);
-    */
 }
 
 void engine::expand_user_data(Backend& backend, ValueToExpand& value, lua_State* state)
 {
-    object_rep* object = get_instance(state, -1);
+    object_rep* object = is_class_object(state, -1);
     if (object)
     {
         expand_class_instance(backend, value, state);

@@ -1,9 +1,6 @@
 [submodule "Externals/LuaJIT"]
 	path = Externals/LuaJIT
 	url = https://github.com/qweasdd136963/LuaJIT.git
-[submodule "Externals/luabind"]
-	path = Externals/luabind
-	url = https://github.com/qweasdd136963/luabind-deboostified.git
 [submodule "Externals/GameSpy"]
 	path = Externals/GameSpy
 	url = https://github.com/nitrocaster/GameSpy.git

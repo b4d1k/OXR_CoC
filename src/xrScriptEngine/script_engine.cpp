@@ -882,10 +882,10 @@ int CScriptEngine::lua_pcall_failed(lua_State* L)
     return LUA_ERRRUN;
 }
 #if 1 //!XRAY_EXCEPTIONS
-void CScriptEngine::lua_cast_failed(lua_State* L, const luabind::type_id& info)
+void CScriptEngine::lua_cast_failed(lua_State* L, LUABIND_TYPE_INFO info)
 {
     string128 buf;
-    xr_sprintf(buf, "LUA error: cannot cast lua value to %s", info.name());
+    xr_sprintf(buf, "LUA error: cannot cast lua value to %s", info->name());
     onErrorCallback(L, "", LUA_ERRRUN, buf);
 }
 #endif
@@ -908,7 +908,7 @@ void CScriptEngine::setup_callbacks()
         luabind::set_error_callback(CScriptEngine::lua_error);
 #endif
 
-        luabind::set_pcall_callback([](lua_State* L) { lua_pushcfunction(L, CScriptEngine::lua_pcall_failed); });
+        luabind::set_pcall_callback(CScriptEngine::lua_pcall_failed);
     }
 #if !XRAY_EXCEPTIONS
     luabind::set_cast_failed_callback(CScriptEngine::lua_cast_failed);
@@ -990,8 +990,6 @@ void CScriptEngine::init(ExporterFunc exporterFunc, bool loadGlobalNamespace)
 #endif
     reinit();
     luabind::open(lua());
-    // XXX: temporary workaround to preserve backwards compatibility with game scripts
-    luabind::disable_super_deprecation();
     luabind::bind_class_info(lua());
     setup_callbacks();
     if (exporterFunc)

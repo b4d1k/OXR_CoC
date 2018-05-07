@@ -28,16 +28,14 @@
 #include "relation_registry.h"
 #include "danger_object.h"
 #include "smart_cover_object.h"
-#include "xrScriptEngine/Functor.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 extern CScriptActionPlanner* script_action_planner(CScriptGameObject* obj);
 
-class_<CScriptGameObject>& script_register_game_object1(class_<CScriptGameObject>& instance)
+class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>&& instance)
 {
-    instance
+    return std::move(instance)
         .enum_("relation")[value("friend", int(ALife::eRelationTypeFriend)),
             value("neutral", int(ALife::eRelationTypeNeutral)), value("enemy", int(ALife::eRelationTypeEnemy)),
             value("dummy", int(ALife::eRelationTypeDummy))]
@@ -415,5 +413,4 @@ class_<CScriptGameObject>& script_register_game_object1(class_<CScriptGameObject
         .def("is_weapon_going_to_be_strapped", &CScriptGameObject::is_weapon_going_to_be_strapped)
 
         ;
-    return (instance);
 }

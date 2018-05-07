@@ -10,7 +10,6 @@
 
 #include "object_factory_space.h"
 #include "object_item_abstract.h"
-#include "xrScriptEngine/Functor.hpp"
 
 class CObjectItemScript : public CObjectItemAbstract
 {
@@ -19,9 +18,9 @@ protected:
 
 protected:
 #ifndef NO_XR_GAME
-    mutable luabind::functor<ObjectFactory::ClientObjectBaseClass*, luabind::policy::adopt<0>> m_client_creator;
+    luabind::object m_client_creator;
 #endif
-    mutable luabind::functor<ObjectFactory::ServerObjectBaseClass*, luabind::policy::adopt<0>> m_server_creator;
+    luabind::object m_server_creator;
 
 public:
     CObjectItemScript(

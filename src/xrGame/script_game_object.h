@@ -452,15 +452,15 @@ public:
     // Callbacks
     void SetCallback(GameObject::ECallbackType type, const luabind::functor<void>& functor);
     void SetCallback(
-        GameObject::ECallbackType type, const luabind::functor<void>& functor, const luabind::adl::object& object);
+        GameObject::ECallbackType type, const luabind::functor<void>& functor, const luabind::object& object);
     void SetCallback(GameObject::ECallbackType type);
 
     void set_patrol_extrapolate_callback(const luabind::functor<bool>& functor);
-    void set_patrol_extrapolate_callback(const luabind::functor<bool>& functor, const luabind::adl::object& object);
+    void set_patrol_extrapolate_callback(const luabind::functor<bool>& functor, const luabind::object& object);
     void set_patrol_extrapolate_callback();
 
     void set_enemy_callback(const luabind::functor<bool>& functor);
-    void set_enemy_callback(const luabind::functor<bool>& functor, const luabind::adl::object& object);
+    void set_enemy_callback(const luabind::functor<bool>& functor, const luabind::object& object);
     void set_enemy_callback();
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -469,7 +469,7 @@ public:
     void SetTipTextDefault();
     void SetNonscriptUsable(bool nonscript_usable);
     ///////////////////////////////////////////////////////////////////////////////////////////
-    void set_fastcall(const luabind::functor<bool>& functor, const luabind::adl::object& object);
+    void set_fastcall(const luabind::functor<bool>& functor, const luabind::object& object);
     void set_const_force(const Fvector& dir, float value, u32 time_interval);
     //////////////////////////////////////////////////////////////////////////
 
@@ -771,7 +771,7 @@ public:
 
     void set_smart_cover_target_selector();
     void set_smart_cover_target_selector(luabind::functor<void> functor);
-    void set_smart_cover_target_selector(luabind::functor<void> functor, luabind::adl::object object);
+    void set_smart_cover_target_selector(luabind::functor<void> functor, luabind::object object);
 
     void set_smart_cover_target_idle();
     void set_smart_cover_target_lookout();

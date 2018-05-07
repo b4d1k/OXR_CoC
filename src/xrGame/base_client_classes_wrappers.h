@@ -57,7 +57,7 @@ private:
     }
 };
 
-typedef FactoryObjectWrapperTpl<IFactoryObject> FactoryObjectWrapper;
+typedef FactoryObjectWrapperTpl<FactoryObjectBase> FactoryObjectWrapper;
 
 /*
 template <typename base, typename luabind_base = Loki::EmptyType>

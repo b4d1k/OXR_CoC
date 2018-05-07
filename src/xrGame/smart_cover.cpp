@@ -46,7 +46,9 @@ cover::cover(smart_cover::object const& object, DescriptionPtr description, bool
         m_loopholes.reserve(m_description->loopholes().size());
         for (const auto& it : m_description->loopholes())
         {
-            for (luabind::iterator i(loopholes_availability), e; i != e; ++i)
+            luabind::object::iterator i = loopholes_availability.begin();
+            luabind::object::iterator e = loopholes_availability.end();
+            for (; i != e; ++i)
             {
                 pcstr const loophole_id = luabind::object_cast<pcstr>(i.key());
                 if (xr_strcmp(loophole_id, it->id()))

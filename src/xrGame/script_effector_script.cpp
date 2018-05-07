@@ -12,7 +12,6 @@
 #include "xrScriptEngine/ScriptExporter.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 void SPPInfo_assign(SPPInfo* self, SPPInfo* obj) { *self = *obj; }
 void add_effector(CScriptEffector* self) { self->Add(); }
@@ -52,7 +51,7 @@ SCRIPT_EXPORT(CScriptEffector, (), {
             .def(constructor<>())
             .def("assign", &SPPInfo_assign),
 
-        class_<CScriptEffector, no_bases, default_holder, CScriptEffectorWrapper>("effector")
+        class_<CScriptEffector, CScriptEffectorWrapper>("effector")
             .def(constructor<int, float>())
             .def("start", &add_effector, adopt<1>())
             .def("finish", &remove_effector, adopt<1>())

@@ -17,15 +17,15 @@ private:
     lua_State* ls;
     Options options;
     int shiftLevel;
-    xr_stack<luabind::iterator> functions;
-    xr_stack<luabind::iterator> classes;
-    xr_stack<luabind::iterator> namespaces;
-    xr_map<luabind::string, const char*> operatorSubst;
+    xr_stack<luabind::object::iterator> functions;
+    xr_stack<luabind::object::iterator> classes;
+    xr_stack<luabind::object::iterator> namespaces;
+    //xr_map<luabind::string, const char*> operatorSubst;
 
 private:
     struct SignatureFormatterParams
     {
-        luabind::detail::function_object* Function;
+        luabind::detail::object_rep* Function;
         const void* Context;
     };
 

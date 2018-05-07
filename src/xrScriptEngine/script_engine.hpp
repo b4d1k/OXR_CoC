@@ -11,7 +11,6 @@
 #include "xrScriptEngine/xrScriptEngine.hpp"
 #include "xrScriptEngine/ScriptExporter.hpp"
 #include "xrScriptEngine/script_space_forward.hpp"
-#include "xrScriptEngine/Functor.hpp"
 #include "xrCore/Threading/Lock.hpp"
 #include "xrCommon/xr_unordered_map.h"
 
@@ -161,7 +160,7 @@ public:
     static void lua_error(lua_State* L);
     static int lua_pcall_failed(lua_State* L);
 #if 1 //!XRAY_EXCEPTIONS
-    static void lua_cast_failed(lua_State* L, const luabind::type_id& info);
+    static void lua_cast_failed(lua_State* L, LUABIND_TYPE_INFO info);
 #endif
 #ifdef DEBUG
     static void lua_hook_call(lua_State* L, lua_Debug* dbg);
@@ -208,6 +207,13 @@ IC bool CScriptEngine::functor(LPCSTR function_to_call, luabind::functor<TResult
     luabind::object object;
     if (!function_object(function_to_call, object))
         return false;
-    lua_function = object;
+
+    try {
+        lua_function = luabind::object_cast<luabind::functor<TResult>>(object);
+    }
+    catch (...) {
+        return (false);
+    }
+
     return true;
 }

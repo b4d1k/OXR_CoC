@@ -108,9 +108,6 @@
     <ClInclude Include="LuaStudio\Defines.hpp">
       <Filter>LuaStudio</Filter>
     </ClInclude>
-    <ClInclude Include="Functor.hpp">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="BindingsDumper.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -158,5 +155,8 @@
     <ClCompile Include="BindingsDumper.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\TypeHelper.natvis" />
   </ItemGroup>
 </Project>

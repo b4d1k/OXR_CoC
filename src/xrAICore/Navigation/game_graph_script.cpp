@@ -13,7 +13,6 @@
 #include "AISpaceBase.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 const CGameGraph* get_game_graph() { return &GEnv.AISpace->game_graph(); }
 const CGameGraph::CHeader* get_header(const CGameGraph* self_) { return (&self_->header()); }
@@ -61,7 +60,7 @@ SCRIPT_EXPORT(CGameGraph, (), {
             .def("vertex", &CGameGraph::vertex)
             .def("vertex_id", &CGameGraph::vertex_id)
             .def("distance", &CGameGraph::distance)
-            .def("levels", &get_levels, return_stl_iterator()),
+            .def("levels", &get_levels, return_stl_iterator),
 
         class_<CVertex>("GameGraph__CVertex")
             .def("level_point", &CVertex__level_point)

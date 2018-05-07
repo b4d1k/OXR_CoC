@@ -15,9 +15,9 @@
 
 using namespace luabind;
 
-extern class_<CScriptGameObject>& script_register_game_object1(class_<CScriptGameObject>&);
-extern class_<CScriptGameObject>& script_register_game_object2(class_<CScriptGameObject>&);
-extern class_<CScriptGameObject>& script_register_game_object_trader(class_<CScriptGameObject>&);
+extern class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>&&);
+extern class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>&&);
+extern class_<CScriptGameObject> script_register_game_object_trader(class_<CScriptGameObject>&&);
 
 SCRIPT_EXPORT(CScriptGameObject, (), {
     // XXX nitrocaster: one can export enum like class, without defining dummy type
@@ -47,7 +47,7 @@ SCRIPT_EXPORT(CScriptGameObject, (), {
                       .def_readonly("m_vector", &CSightParams::m_vector)
                       .def_readonly("m_sight_type", &CSightParams::m_sight_type),
 
-        script_register_game_object2(script_register_game_object1(script_register_game_object_trader(instance))),
+        script_register_game_object2(script_register_game_object1(script_register_game_object_trader(std::move(instance)))),
 
         class_<EnumCallbackType>("callback")
             .enum_("callback_types")[value("trade_start", int(GameObject::eTradeStart)),

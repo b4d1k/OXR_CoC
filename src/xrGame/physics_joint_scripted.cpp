@@ -4,7 +4,6 @@
 #include "xrScriptEngine/ScriptExporter.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 cphysics_element_scripted* cphysics_joint_scripted::PFirst_element()
 {
@@ -23,7 +22,6 @@ cphysics_element_scripted* cphysics_joint_scripted::PSecond_element()
 }
 
 SCRIPT_EXPORT(cphysics_joint_scripted, (), {
-    auto out23 = policy_list<out_value<2>, out_value<3>>();
     module(luaState)[class_<cphysics_joint_scripted>("physics_joint")
                          .def("get_bone_id", &cphysics_joint_scripted::BoneID)
                          .def("get_first_element", &cphysics_joint_scripted::PFirst_element)
@@ -39,9 +37,9 @@ SCRIPT_EXPORT(cphysics_joint_scripted, (), {
                          .def("set_axis_dir_vs_second_element", &cphysics_joint_scripted::SetAxisDirVsSecondElement)
                          .def("set_limits", &cphysics_joint_scripted::SetLimits)
                          .def("set_max_force_and_velocity", &cphysics_joint_scripted::SetForceAndVelocity)
-                         .def("get_max_force_and_velocity", &cphysics_joint_scripted::GetMaxForceAndVelocity, out23)
+                         .def("get_max_force_and_velocity", &cphysics_joint_scripted::GetMaxForceAndVelocity, out_value<2>() + out_value<3>())
                          .def("get_axis_angle", &cphysics_joint_scripted::GetAxisAngle)
-                         .def("get_limits", &cphysics_joint_scripted::GetLimits, out23)
+                         .def("get_limits", &cphysics_joint_scripted::GetLimits, out_value<2>() + out_value<3>())
                          .def("get_axis_dir", &cphysics_joint_scripted::GetAxisDirDynamic)
                          .def("get_anchor", &cphysics_joint_scripted::GetAnchorDynamic)
                          .def("is_breakable", &cphysics_joint_scripted::isBreakable)];

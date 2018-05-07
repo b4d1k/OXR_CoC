@@ -3,7 +3,6 @@
 #include "xrScriptEngine/ScriptExporter.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 using namespace gamespy_gp;
 
 SCRIPT_EXPORT(account_manager, (), {
@@ -11,7 +10,7 @@ SCRIPT_EXPORT(account_manager, (), {
                          .def("suggest_unique_nicks", &account_manager::suggest_unique_nicks)
                          .def("stop_suggest_unique_nicks", &account_manager::stop_suggest_unique_nicks)
 
-                         .def("get_suggested_unicks", &account_manager::get_suggested_unicks, return_stl_iterator())
+                         .def("get_suggested_unicks", &account_manager::get_suggested_unicks, return_stl_iterator)
                          .def("create_profile", &account_manager::create_profile)
                          .def("delete_profile", &account_manager::delete_profile)
 
@@ -19,7 +18,7 @@ SCRIPT_EXPORT(account_manager, (), {
                          .def("get_account_profiles", &account_manager::get_account_profiles)
                          .def("stop_fetching_account_profiles", &account_manager::stop_fetching_account_profiles)
 
-                         .def("get_found_profiles", &account_manager::get_found_profiles, return_stl_iterator())
+                         .def("get_found_profiles", &account_manager::get_found_profiles, return_stl_iterator)
                          .def("verify_unique_nick", &account_manager::verify_unique_nick)
                          .def("verify_email", &account_manager::verify_email)
                          .def("verify_password", &account_manager::verify_password)

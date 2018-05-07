@@ -9,7 +9,6 @@
 #include "pch_script.h"
 #include "object_item_script.h"
 #include "object_factory.h"
-#include "xrScriptEngine/Functor.hpp"
 
 #ifndef NO_XR_GAME
 #include "attachable_item.h"
@@ -19,7 +18,8 @@ ObjectFactory::ClientObjectBaseClass* CObjectItemScript::client_object() const
     ObjectFactory::ClientObjectBaseClass* object = nullptr;
     try
     {
-        object = m_client_creator();
+        object = luabind::object_cast<ObjectFactory::ClientObjectBaseClass*>(
+            m_client_creator(), luabind::adopt<luabind::result>());
     }
     catch (...)
     {
@@ -37,7 +37,8 @@ ObjectFactory::ServerObjectBaseClass* CObjectItemScript::server_object(LPCSTR se
 
     try
     {
-        object = m_server_creator(section);
+        object = luabind::object_cast<ObjectFactory::ServerObjectBaseClass*>(
+            m_server_creator(section), luabind::adopt<luabind::result>());
     }
     catch (const std::exception e)
     {

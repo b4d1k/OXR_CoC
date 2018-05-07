@@ -4,7 +4,6 @@
 #include "xrScriptEngine/ScriptExporter.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 SCRIPT_EXPORT(CUITabControl, (CUIWindow), {
     module(luaState)[class_<CUITabControl, CUIWindow>("CUITabControl")

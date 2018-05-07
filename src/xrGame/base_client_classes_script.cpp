@@ -17,35 +17,34 @@
 using namespace luabind;
 
 // clang-format off
-SCRIPT_EXPORT(IFactoryObject, (), {
+SCRIPT_EXPORT(FactoryObjectBase, (), {
     module(luaState)[
         // 'DLL_Pure' is preserved to maintain backward compatibility with mod scripts
-        class_<IFactoryObject, no_bases, default_holder, FactoryObjectWrapper>("DLL_Pure")
+        class_<FactoryObjectBase,  FactoryObjectWrapper>("DLL_Pure")
             .def(constructor<>())
-            .def("_construct", &IFactoryObject::_construct, &FactoryObjectWrapper::_construct_static)];
+            .def("_construct", &FactoryObjectBase::_construct, &FactoryObjectWrapper::_construct_static)];
 });
 
 SCRIPT_EXPORT(ISheduled, (), {
     module(luaState)
     [
-        class_<ISheduled, no_bases, default_holder, CISheduledWrapper>("ISheduled")
+        class_<ISheduled, CISheduledWrapper>("ISheduled")
     ];
 });
 
 SCRIPT_EXPORT(IRenderable, (), {
     module(luaState)
     [
-        class_<IRenderable, no_bases, default_holder, CIRenderableWrapper>("IRenderable")
+        class_<IRenderable, CIRenderableWrapper>("IRenderable")
     ];
 });
 
 SCRIPT_EXPORT(ICollidable, (), { module(luaState)[class_<ICollidable>("ICollidable")]; });
 
-SCRIPT_EXPORT(CGameObject, (IFactoryObject, ISheduled, ICollidable, IRenderable), {
+SCRIPT_EXPORT(CGameObject, (FactoryObjectBase, ISheduled, ICollidable, IRenderable), {
     module(luaState)
     [
-        class_<CGameObject, bases<IFactoryObject, ISheduled, ICollidable, IRenderable>, default_holder,
-            CGameObjectWrapper>("CGameObject")
+        class_<CGameObject, bases<FactoryObjectBase, ISheduled, ICollidable, IRenderable>, CGameObjectWrapper>("CGameObject")
             .def(constructor<>())
             .def("_construct", &CGameObject::_construct, &CGameObjectWrapper::_construct_static)
             .def("Visual", &CGameObject::Visual)

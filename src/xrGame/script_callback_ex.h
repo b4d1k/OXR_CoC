@@ -13,18 +13,11 @@
 
 IC bool compare_safe(const luabind::object& o1, const luabind::object& o2)
 {
-    if ((luabind::type(o1) == LUA_TNIL) && (luabind::type(o2) == LUA_TNIL))
+    if ((o1.type() == LUA_TNIL) && (o2.type() == LUA_TNIL))
         return (true);
 
     return (o1 == o2);
 }
-
-#if XRAY_EXCEPTIONS
-#define process_error \
-    catch (luabind::error & e) { GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", LUA_ERRRUN); }
-#else
-#define process_error
-#endif
 
 template <typename TResult>
 class CScriptCallbackEx
@@ -33,7 +26,7 @@ public:
     using ResultType = TResult;
 
 private:
-    using functor_type = luabind::object;
+    using functor_type = luabind::functor<TResult>;
     using object_type = luabind::object;
     using unspecified_bool_type = bool (CScriptCallbackEx::*)() const;
 
@@ -42,7 +35,22 @@ protected:
     object_type m_object;
 
 private:
-    bool empty() const { return !!m_functor.interpreter(); }
+    bool empty() const { return !!m_functor.lua_state(); }
+
+    template <typename T>
+    static void do_return(T&& value, std::true_type /*is_void*/) {
+        (void)value;
+    }
+
+    template <typename T>
+    static ResultType do_return(T&& value, std::false_type /*is_void*/) {
+        return ResultType(std::forward<T>(value));
+    }
+
+    template <typename T>
+    static decltype(auto) do_return(T&& value) {
+        return do_return(std::forward<T>(value), std::is_void<ResultType>());
+    }
 public:
     CScriptCallbackEx() {}
     virtual ~CScriptCallbackEx() {}
@@ -55,9 +63,9 @@ public:
     CScriptCallbackEx& operator=(const CScriptCallbackEx& callback)
     {
         clear();
-        if (callback.m_functor.is_valid() && callback.m_functor.interpreter())
+        if (callback.m_functor.is_valid() && callback.m_functor.lua_state())
             m_functor = callback.m_functor;
-        if (callback.m_object.is_valid() && callback.m_object.interpreter())
+        if (callback.m_object.is_valid() && callback.m_object.lua_state())
             m_object = callback.m_object;
         return *this;
     }
@@ -103,22 +111,25 @@ public:
                     if (m_object.is_valid())
                     {
                         VERIFY(m_object.is_valid());
-                        return TResult(
-                            luabind::call_function<TResult>(m_functor, m_object, std::forward<Args>(args)...));
+                        return do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
                     }
-                    return TResult(luabind::call_function<TResult>(m_functor, std::forward<Args>(args)...));
+                    return do_return(this->m_functor(std::forward<Args>(args)...));
                 }
             }
-            process_error catch (std::exception&)
-            {
-                GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", 1);
+#if XRAY_EXCEPTIONS
+            catch (luabind::error& e) {
+                if (e.state())
+                    GEnv.ScriptEngine->print_output(e.state(), "", LUA_ERRRUN);
+                else
+                    GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", LUA_ERRRUN);
             }
+#endif
         }
         catch (...)
         {
             const_cast<CScriptCallbackEx<TResult>*>(this)->clear();
         }
-        return TResult(0);
+        return do_return(0);
     }
 
     template <typename... Args>
@@ -134,22 +145,25 @@ public:
                     if (m_object.is_valid())
                     {
                         VERIFY(m_object.is_valid());
-                        return TResult(
-                            luabind::call_function<TResult>(m_functor, m_object, std::forward<Args>(args)...));
+                        return do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
                     }
-                    return TResult(luabind::call_function<TResult>(m_functor, std::forward<Args>(args)...));
+                    return do_return(this->m_functor(std::forward<Args>(args)...));
                 }
             }
-            process_error catch (std::exception&)
-            {
-                GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", 1);
+#if XRAY_EXCEPTIONS
+            catch (luabind::error& e) {
+                if (e.state())
+                    GEnv.ScriptEngine->print_output(e.state(), "", LUA_ERRRUN);
+                else
+                    GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", LUA_ERRRUN);
             }
+#endif
         }
         catch (...)
         {
             const_cast<CScriptCallbackEx<TResult>*>(this)->clear();
         }
-        return TResult(0);
+        return do_return(0);
     }
 };
 
@@ -167,13 +181,20 @@ void CScriptCallbackEx<void>::operator()(Args&&... args) const
                 if (m_object.is_valid())
                 {
                     VERIFY(m_object.is_valid());
-                    luabind::call_function<void>(m_functor, m_object, std::forward<Args>(args)...);
+                    do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
                 }
                 else
-                    luabind::call_function<void>(m_functor, std::forward<Args>(args)...);
+                    do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
             }
         }
-        process_error catch (std::exception&) { GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", 1); }
+#if XRAY_EXCEPTIONS
+        catch (luabind::error& e) {
+            if (e.state())
+                GEnv.ScriptEngine->print_output(e.state(), "", LUA_ERRRUN);
+            else
+                GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", LUA_ERRRUN);
+        }
+#endif
     }
     catch (...)
     {
@@ -195,13 +216,20 @@ void CScriptCallbackEx<void>::operator()(Args&&... args)
                 if (m_object.is_valid())
                 {
                     VERIFY(m_object.is_valid());
-                    luabind::call_function<void>(m_functor, m_object, std::forward<Args>(args)...);
+                    do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
                 }
                 else
-                    luabind::call_function<void>(m_functor, std::forward<Args>(args)...);
+                    do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
             }
         }
-        process_error catch (std::exception&) { GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", 1); }
+#if XRAY_EXCEPTIONS
+        catch (luabind::error& e) {
+            if (e.state())
+                GEnv.ScriptEngine->print_output(e.state(), "", LUA_ERRRUN);
+            else
+                GEnv.ScriptEngine->print_output(GEnv.ScriptEngine->lua(), "", LUA_ERRRUN);
+        }
+#endif
     }
     catch (...)
     {

@@ -2,7 +2,6 @@
 #include "xr_level_controller.h"
 #include "xrEngine/pure.h"
 #include "xrEngine/IInputReceiver.h"
-#include "xrScriptEngine/Functor.hpp"
 #include "xrCommon/xr_deque.h"
 
 class CUIWindow;

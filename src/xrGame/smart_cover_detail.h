@@ -19,13 +19,13 @@ namespace detail
 {
 typedef RestrictionSpace::CTimeIntrusiveBase intrusive_base_time;
 
-float parse_float(luabind::adl::object const& table, LPCSTR identifier, float const& min_threshold = flt_min,
+float parse_float(luabind::object const& table, LPCSTR identifier, float const& min_threshold = flt_min,
     float const& max_threshold = flt_max);
-LPCSTR parse_string(luabind::adl::object const& table, LPCSTR identifier);
-void parse_table(luabind::adl::object const& table, LPCSTR identifier, luabind::adl::object& result);
-bool parse_bool(luabind::adl::object const& table, LPCSTR identifier);
-int parse_int(luabind::adl::object const& table, LPCSTR identifier);
-Fvector parse_fvector(luabind::adl::object const& table, LPCSTR identifier);
+LPCSTR parse_string(luabind::object const& table, LPCSTR identifier);
+void parse_table(luabind::object const& table, LPCSTR identifier, luabind::object& result);
+bool parse_bool(luabind::object const& table, LPCSTR identifier);
+int parse_int(luabind::object const& table, LPCSTR identifier);
+Fvector parse_fvector(luabind::object const& table, LPCSTR identifier);
 
 }; // namespace detail
 

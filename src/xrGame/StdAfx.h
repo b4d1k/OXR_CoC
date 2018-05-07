@@ -88,7 +88,6 @@
 #include "xrGame/ui/UIEditBox.h"
 #include "xrGame/ui/UIWindow.h" // ~225
 #include "xrGame/ui/UIMessages.h" // ~225  one single enum
-#include "xrScriptEngine/Functor.hpp" // ~225 // XXX: See to it this goes to pch_script
 #include "xrGame/fire_disp_controller.h" // ~220
 #include "xrGame/Actor.h" // ~220
 #include "xrEngine/CameraDefs.h" // ~210

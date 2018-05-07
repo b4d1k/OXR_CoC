@@ -13,7 +13,6 @@
 #include "xrScriptEngine/ScriptExporter.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 void set_goal_world_state(CScriptActionPlanner* action_planner, CScriptActionPlanner::CState* world_state)
 {
@@ -25,7 +24,7 @@ CScriptActionPlanner* cast_planner(CScriptActionBase* action) { return (smart_ca
 IC static void CScriptActionPlanner_Export(lua_State* luaState)
 {
     module(
-        luaState)[class_<CScriptActionPlanner, no_bases, default_holder, CScriptActionPlannerWrapper>("action_planner")
+        luaState)[class_<CScriptActionPlanner, CScriptActionPlannerWrapper>("action_planner")
                       .def_readonly("object", &CScriptActionPlanner::m_object)
                       .def_readonly("storage", &CScriptActionPlanner::m_storage)
                       .def(constructor<>())

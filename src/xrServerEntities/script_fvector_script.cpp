@@ -10,7 +10,6 @@
 #include "xrScriptEngine/ScriptExporter.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 SCRIPT_EXPORT(Fvector, (), {
     module(luaState)

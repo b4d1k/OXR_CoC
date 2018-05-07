@@ -12,7 +12,6 @@
 #include "UIGameCustom.h"
 #include "UIActorMenu.h"
 #include "UIPdaWnd.h"
-#include "xrScriptEngine/Functor.hpp"
 
 extern ENGINE_API BOOL bShowPauseString;
 

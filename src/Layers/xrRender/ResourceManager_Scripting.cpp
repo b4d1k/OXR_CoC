@@ -10,7 +10,6 @@
 #include "luabind/return_reference_to_policy.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 #ifdef DEBUG
 #define MDB Memory.dbg_check()
@@ -417,7 +416,7 @@ ShaderElement* CBlender_Compile::_lua_Compile(LPCSTR namesp, LPCSTR name)
     LPCSTR t_1 = (L_textures.size() > 1) ? *L_textures[1] : "null";
     LPCSTR t_d = detail_texture ? detail_texture : "null";
     const object shader = RImplementation.Resources->ScriptEngine.name_space(namesp);
-    const functor<void> element = (object)shader[name];
+    const functor<void> element = object_cast<functor<void>>(shader[name]);
     adopt_compiler ac = adopt_compiler(this);
     element(ac, t_0, t_1, t_d);
     r_End();

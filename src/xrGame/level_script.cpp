@@ -44,7 +44,6 @@
 #include "xrNetServer/NET_Messages.h"
 #endif
 using namespace luabind;
-using namespace luabind::policy;
 
 LPCSTR command_line() { return Core.Params; }
 bool IsDynamicMusic() { return !!psActorFlags.test(AF_DYNAMIC_MUSIC); }
@@ -576,6 +575,11 @@ bool has_active_tutotial() { return (g_tutorial != NULL); }
 //Alundaio: namespace level exports extension
 #ifdef NAMESPACE_LEVEL_EXPORTS
 //ability to update level netpacket
+void g_send(NET_Packet& P, bool bReliable = false, bool bSequential = true, bool bHighPriority = false, bool bSendImmediately = false)
+{
+    Level().Send(P, net_flags(false, true, false, false));
+}
+/*
 void g_send(NET_Packet& P)
 {
     Level().Send(P, net_flags(false, true, false, false));
@@ -595,7 +599,7 @@ void g_send(NET_Packet& P, bool bReliable, bool bSequential, bool bHighPriority)
 void g_send(NET_Packet& P, bool bReliable, bool bSequential, bool bHighPriority, bool bSendImmediately)
 {
     Level().Send(P, net_flags(bReliable, bSequential, bHighPriority, bSendImmediately));
-}
+}*/
 
 void u_event_gen(NET_Packet& P, u32 _event, u32 _dest)
 {
@@ -733,11 +737,12 @@ IC static void CLevel_Export(lua_State* luaState)
     [
         //Alundaio: Extend level namespace exports
 #ifdef NAMESPACE_LEVEL_EXPORTS
-        def("send", (void(*)(NET_Packet&))&g_send),
+        def("send", &g_send),
+        /*def("send", (void(*)(NET_Packet&))&g_send),
         def("send", (void(*)(NET_Packet&, bool))&g_send),
         def("send", (void(*)(NET_Packet&, bool, bool))&g_send),
         def("send", (void(*)(NET_Packet&, bool, bool, bool))&g_send),
-        def("send", (void(*)(NET_Packet&, bool, bool, bool, bool))&g_send), //allow the ability to send netpacket to level
+        def("send", (void(*)(NET_Packet&, bool, bool, bool, bool))&g_send), //allow the ability to send netpacket to level*/
         def("qweasddMess1", (void(*)(NET_Packet&))&qweasddMess1),
         def("qweasddMess1", (void(*)(NET_Packet&, bool))&qweasddMess1),
         def("qweasddMess1", (void(*)(NET_Packet&, bool, bool))&qweasddMess1),
@@ -916,8 +921,8 @@ IC static void CLevel_Export(lua_State* luaState)
                               .def("setHMS", &xrTime::setHMS)
                               .def("setHMSms", &xrTime::setHMSms)
                               .def("set", &xrTime::set)
-                              .def("get", &xrTime::get, policy_list<out_value<2>, out_value<3>, out_value<4>,
-                                                            out_value<5>, out_value<6>, out_value<7>, out_value<8>>())
+                              .def("get", &xrTime::get, out_value<2>() + out_value<3>() + out_value<4>() + out_value<5>() +
+                                  out_value<6>() + out_value<7>() + out_value<8>())
                               .def("dateToString", &xrTime::dateToString)
                               .def("timeToString", &xrTime::timeToString),
         // declarations

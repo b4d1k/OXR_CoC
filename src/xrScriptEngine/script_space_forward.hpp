@@ -10,13 +10,10 @@
 
 namespace luabind
 {
-namespace adl
-{
 class object;
-}
 
-template <typename TResult, typename... Policies>
+template <class T>
 class functor;
-template <class T, class ValueWrapper>
-T object_cast(ValueWrapper const& value_wrapper);
+template <class T>
+T object_cast(const object& obj);
 }

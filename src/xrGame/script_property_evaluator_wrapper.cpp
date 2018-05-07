@@ -35,7 +35,7 @@ bool CScriptPropertyEvaluatorWrapper::evaluate()
 #ifdef LOG_ACTION
         GEnv.ScriptEngine->script_log(LuaMessageType::Error,
             "SCRIPT RUNTIME ERROR : evaluator [%s] returns value with not a %s type!", m_evaluator_name,
-            exception.info().name());
+            exception.info()->name());
 #else
         GEnv.ScriptEngine->script_log(LuaMessageType::Error,
             "SCRIPT RUNTIME ERROR : evaluator returns value with not a %s type!", exception.info().name());

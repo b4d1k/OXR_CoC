@@ -35,7 +35,6 @@ Fvector2 GetCursorPosition_script() { return GetUICursor().GetCursorPosition(); 
 void SetCursorPosition_script(Fvector2& pos) { GetUICursor().SetUICursorPosition(pos); }
 
 using namespace luabind;
-using namespace luabind::policy;
 
 // clang-format off
 SCRIPT_EXPORT(CUIWindow, (), {

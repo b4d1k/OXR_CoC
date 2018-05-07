@@ -15,7 +15,6 @@
 #include "ai_space.h"
 #include "CustomZone.h"
 #include "xrEngine/xr_collide_form.h"
-#include "xrScriptEngine/Functor.hpp"
 #include "xrEngine/GameFont.h"
 #ifdef DEBUG
 #include "debug_renderer.h"

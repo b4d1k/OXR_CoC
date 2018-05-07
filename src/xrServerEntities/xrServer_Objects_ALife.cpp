@@ -193,7 +193,9 @@ void SFillPropData::load()
 
     R_ASSERT(GEnv.ScriptEngine->function_object("smart_covers.descriptions", table, LUA_TTABLE));
 
-    for (luabind::iterator I(table), E; I != E; ++I)
+    luabind::object::iterator I = table.begin();
+    luabind::object::iterator E = table.end();
+    for (; I != E; ++I)
         smart_covers.push_back(luabind::object_cast<LPCSTR>(I.key()));
 
     std::sort(smart_covers.begin(), smart_covers.end(), logical_string_predicate());

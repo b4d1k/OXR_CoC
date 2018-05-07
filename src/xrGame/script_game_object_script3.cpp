@@ -35,7 +35,6 @@
 #include "artefact.h"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 template <typename TClass>
 bool is(CScriptGameObject* script_obj)
@@ -54,9 +53,9 @@ TClass* objectCast(CScriptGameObject* script_obj)
     return smart_cast<TClass*>(obj);
 }
 
-class_<CScriptGameObject>& script_register_game_object2(class_<CScriptGameObject>& instance)
+class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>&& instance)
 {
-    instance
+    return std::move(instance)
         .def("add_sound",
             (u32(CScriptGameObject::*)(LPCSTR, u32, ESoundTypes, u32, u32, u32))(&CScriptGameObject::add_sound))
         .def("add_sound",
@@ -83,10 +82,10 @@ class_<CScriptGameObject>& script_register_game_object2(class_<CScriptGameObject
         .def("best_cover", &CScriptGameObject::best_cover)
         .def("safe_cover", &CScriptGameObject::safe_cover)
         .def("spawn_ini", &CScriptGameObject::spawn_ini)
-        .def("memory_visible_objects", &CScriptGameObject::memory_visible_objects, return_stl_iterator())
-        .def("memory_sound_objects", &CScriptGameObject::memory_sound_objects, return_stl_iterator())
-        .def("memory_hit_objects", &CScriptGameObject::memory_hit_objects, return_stl_iterator())
-        .def("not_yet_visible_objects", &CScriptGameObject::not_yet_visible_objects, return_stl_iterator())
+        .def("memory_visible_objects", &CScriptGameObject::memory_visible_objects, return_stl_iterator)
+        .def("memory_sound_objects", &CScriptGameObject::memory_sound_objects, return_stl_iterator)
+        .def("memory_hit_objects", &CScriptGameObject::memory_hit_objects, return_stl_iterator)
+        .def("not_yet_visible_objects", &CScriptGameObject::not_yet_visible_objects, return_stl_iterator)
         .def("visibility_threshold", &CScriptGameObject::visibility_threshold)
         .def("enable_vision", &CScriptGameObject::enable_vision)
         .def("vision_enabled", &CScriptGameObject::vision_enabled)
@@ -498,5 +497,4 @@ class_<CScriptGameObject>& script_register_game_object2(class_<CScriptGameObject
         //-AVO
 
         ;
-    return instance;
 }

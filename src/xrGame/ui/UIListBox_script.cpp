@@ -10,7 +10,6 @@
 #include "xrScriptEngine/ScriptExporter.hpp"
 
 using namespace luabind;
-using namespace luabind::policy;
 
 struct CUIListBoxItemWrapper : public CUIListBoxItem, public luabind::wrap_base
 {
@@ -47,7 +46,7 @@ SCRIPT_EXPORT(CUIListBox, (CUIScrollView), {
 SCRIPT_EXPORT(CUIListBoxItem, (CUIFrameLineWnd), {
     module(luaState)
     [
-        class_<CUIListBoxItem, CUIFrameLineWnd, default_holder, CUIListBoxItemWrapper>("CUIListBoxItem")
+        class_<CUIListBoxItem, CUIFrameLineWnd, CUIListBoxItemWrapper>("CUIListBoxItem")
             .def(constructor<float>())
             .def("GetTextItem", &CUIListBoxItem::GetTextItem)
             .def("AddTextField", &CUIListBoxItem::AddTextField)
@@ -59,7 +58,7 @@ SCRIPT_EXPORT(CUIListBoxItem, (CUIFrameLineWnd), {
 SCRIPT_EXPORT(CUIListBoxItemMsgChain, (CUIListBoxItem), {
     module(luaState)
     [
-        class_<CUIListBoxItemMsgChain, CUIListBoxItem, default_holder, CUIListBoxItemMsgChainWrapper>("CUIListBoxItemMsgChain")
+        class_<CUIListBoxItemMsgChain, CUIListBoxItem, CUIListBoxItemMsgChainWrapper>("CUIListBoxItemMsgChain")
             .def(constructor<float>())
     ];
 });
