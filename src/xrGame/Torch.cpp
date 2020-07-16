@@ -163,10 +163,6 @@ void CTorch::SwitchNightVision(bool vision_on, bool use_sounds)
     }
 }
 
-CTorch::CTorch(const shared_str& section) : m_pActor(NULL)
-{
-    m_sounds.LoadSound(section.c_str(), "snd_night_vision_on", "NightVisionOnSnd", false, SOUND_TYPE_ITEM_USING);
-}
 
 void CTorch::Switch()
 {
