@@ -88,7 +88,6 @@
   <PropertyGroup>
     <TargetName>xrEngine</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup>
     <ClCompile>
       <ConformanceMode>true</ConformanceMode>
