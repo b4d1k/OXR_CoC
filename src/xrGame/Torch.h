@@ -47,6 +47,8 @@ public:
     void Switch();
     void Switch(bool light_on);
     bool torch_active() const;
+    CActor* m_pActor;
+    CTorch(const shared_str& sect);
 
     virtual bool can_be_attached() const;
 
