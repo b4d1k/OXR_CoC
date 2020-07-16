@@ -82,6 +82,9 @@ void CTorch::Load(LPCSTR section)
     light_trace_bone = pSettings->r_string(section, "light_trace_bone");
 
     m_bNightVisionEnabled = !!pSettings->r_bool(section, "night_vision");
+
+    m_sounds.LoadSound(section.c_str(), "snd_switch_on", "TorchOnSnd", false, SOUND_TYPE_ITEM_USING);
+    m_sounds.LoadSound(section.c_str(), "snd_switch_off", "TorchOffSnd", false, SOUND_TYPE_ITEM_USING);
 }
 
 void CTorch::SwitchNightVision()
@@ -174,12 +177,17 @@ void CTorch::Switch()
 void CTorch::Switch(bool light_on)
 {
     m_switched_on = light_on;
+
+    CActor* pActor = smart_cast<CActor*>(H_Parent());
+    if (light_on)
+        m_sounds.PlaySound("TorchOnSnd", pActor->Position(), NULL, true);
+    else
+        m_sounds.PlaySound("TorchOffSnd", pActor->Position(), NULL, true);
+
     if (can_use_dynamic_lights())
     {
         light_render->set_active(light_on);
 
-        // CActor *pA = smart_cast<CActor *>(H_Parent());
-        // if(!pA)
         light_omni->set_active(light_on);
     }
     glow_render->set_active(light_on);
